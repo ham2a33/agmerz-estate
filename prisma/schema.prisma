@@ -1,0 +1,256 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+}
+
+enum PropertyType {
+  apartment
+  house
+  commercial
+  land
+  rent
+}
+
+enum PropertyStatus {
+  active
+  reserved
+  sold
+  rented
+  draft
+}
+
+enum ClientType {
+  buyer
+  seller
+  renter
+  landlord
+  investor
+}
+
+enum ClientStatus {
+  new
+  active
+  in_progress
+  completed
+  inactive
+}
+
+enum RequestType {
+  buy
+  rent
+  sell
+  consultation
+  contact
+}
+
+enum RequestStatus {
+  new
+  in_progress
+  completed
+  cancelled
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id          String     @id
+  name        String
+  slug        String     @unique
+  description String     @default("")
+  image       String?
+  isActive    Boolean    @default(true)
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  properties  Property[]
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model Property {
+  id          String         @id
+  title       String
+  slug        String         @unique
+  type        PropertyType
+  status      PropertyStatus @default(active)
+  price       Int
+  currency    String         @default("₽")
+  address     String
+  district    String
+  area        Float
+  rooms       Int?
+  floor       Int?
+  totalFloors Int?
+  yearBuilt   Int?
+  description String         @default("")
+  features    String[]
+  lat         Float?
+  lng         Float?
+  isFeatured  Boolean        @default(false)
+  featuredOrder Int?
+  categoryId  String
+  category    Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  images      PropertyImage[]
+  requests    Request[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([isFeatured, featuredOrder])
+}
+
+model PropertyImage {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  url        String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([propertyId])
+  @@index([propertyId, sortOrder])
+}
+
+model Client {
+  id              String       @id
+  firstName       String
+  lastName        String       @default("")
+  phone           String       @default("")
+  email           String       @default("")
+  type            ClientType   @default(buyer)
+  status          ClientStatus @default(new)
+  notes           String       @default("")
+  assignedManager String       @default("")
+  requests        Request[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([phone])
+  @@index([email])
+  @@index([status])
+  @@index([updatedAt])
+}
+
+model Request {
+  id            String        @id
+  name          String
+  phone         String
+  email         String        @default("")
+  type          RequestType
+  budget        Int?
+  district      String?
+  rooms         Int?
+  message       String        @default("")
+  internalNotes String        @default("")
+  status        RequestStatus @default(new)
+  clientId      String?
+  client        Client?       @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  propertyId    String?
+  property      Property?     @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  createdAt     DateTime      @default(now())
+
+  @@index([status])
+  @@index([clientId])
+  @@index([propertyId])
+  @@index([createdAt])
+  @@index([phone])
+  @@index([email])
+}
+
+model SiteSettings {
+  id                    String        @id @default("default")
+  agencyName            String
+  description           String        @default("")
+  phone                 String        @default("")
+  whatsapp              String        @default("")
+  email                 String        @default("")
+  address               String        @default("")
+  city                  String        @default("")
+  workingHours          String        @default("")
+  instagram             String        @default("")
+  telegram              String        @default("")
+  tiktok                String        @default("")
+  facebook              String        @default("")
+  siteTitle             String        @default("")
+  metaTitle             String        @default("")
+  metaDescription       String        @default("")
+  ogImage               String        @default("")
+  googleAnalyticsId     String        @default("")
+  language              String        @default("ru")
+  currency              String        @default("₸")
+  contactPhone          String        @default("")
+  contactEmail          String        @default("")
+  contactWhatsapp       String        @default("")
+  contactAddress        String        @default("")
+  googleMapsUrl         String        @default("")
+  leadEmail             String        @default("")
+  leadWhatsapp          String        @default("")
+  notificationsEnabled  Boolean       @default(true)
+  defaultRequestStatus  RequestStatus @default(new)
+  logoUrl               String        @default("")
+  faviconUrl            String        @default("")
+  homepageConfig        Json?
+  updatedAt             DateTime      @updatedAt
+}
+
+model Review {
+  id          String   @id
+  name        String
+  avatar      String?
+  rating      Int
+  text        String
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([createdAt])
+}
+
+model BlogPost {
+  id            String    @id
+  title         String
+  slug          String    @unique
+  excerpt       String
+  content       String    @default("")
+  contentBlocks Json?
+  coverImage    String?
+  author        String    @default("AGMERZ ESTATE")
+  publishedAt   DateTime?
+  isPublished   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([isPublished])
+  @@index([publishedAt])
+  @@index([slug])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  type      String   @default("image")
+  alt       String?
+  title     String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
