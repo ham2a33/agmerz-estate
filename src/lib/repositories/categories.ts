@@ -56,8 +56,10 @@ export async function getCategoryById(id: string): Promise<Category | null> {
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  const record = await prisma.category.findUnique({ where: { slug } });
-  return record ? mapCategory(record) : null;
+  return withCategoryFallback(async () => {
+    const record = await prisma.category.findUnique({ where: { slug } });
+    return record ? mapCategory(record) : null;
+  }, MOCK_ADMIN_CATEGORIES.find((category) => category.slug === slug) ?? null);
 }
 
 async function generateCategoryId(): Promise<string> {

@@ -25,8 +25,12 @@ function mergeHomepageConfig(raw: unknown): HomepageConfig {
 }
 
 export async function getHomepageConfig(): Promise<HomepageConfig> {
-  const record = await getSettingsRecord();
-  return mergeHomepageConfig(record.homepageConfig);
+  try {
+    const record = await getSettingsRecord();
+    return mergeHomepageConfig(record.homepageConfig);
+  } catch {
+    return DEFAULT_HOMEPAGE_CONFIG;
+  }
 }
 
 export async function updateHomepageConfig(input: HomepageUpdateSchema): Promise<HomepageConfig> {

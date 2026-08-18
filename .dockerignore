@@ -1,0 +1,53 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# build output
+.next
+out
+build
+dist
+
+# git
+.git
+.gitignore
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# tests / coverage
+coverage
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# editor / OS
+.DS_Store
+*.pem
+.vscode
+.idea
+
+# docker data (never send volumes into build context)
+postgres_data
+uploads_data
+
+# docs not needed at runtime
+docs
+
+# cursor / agent artifacts
+.cursor
+agent-transcripts
+
+# uploaded files — production uploads come from the persistent volume, not the image
+public/uploads/*
+!public/uploads/.gitkeep
