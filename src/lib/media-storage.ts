@@ -3,8 +3,8 @@ import "server-only";
 import { randomUUID } from "crypto";
 import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
+import { UPLOADS_DIR } from "@/lib/uploads-path";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const ALLOWED_MIME_TYPES = new Map<string, string>([
@@ -45,9 +45,9 @@ export async function uploadImageFile(input: UploadFileInput): Promise<StoredFil
   const extension = ALLOWED_MIME_TYPES.get(input.mimeType)!;
   const baseName = sanitizeFilename(path.parse(input.originalName).name || "image");
   const storageKey = `${Date.now()}-${randomUUID()}-${baseName}${extension}`;
-  const absolutePath = path.join(UPLOAD_DIR, storageKey);
+  const absolutePath = path.join(UPLOADS_DIR, storageKey);
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
+  await mkdir(UPLOADS_DIR, { recursive: true });
   await writeFile(absolutePath, input.buffer);
 
   return {
@@ -62,7 +62,7 @@ export async function deleteStoredFile(url: string): Promise<void> {
   const storageKey = url.replace("/uploads/", "");
   if (storageKey.includes("..") || storageKey.includes("/")) return;
 
-  const absolutePath = path.join(UPLOAD_DIR, storageKey);
+  const absolutePath = path.join(UPLOADS_DIR, storageKey);
   try {
     await unlink(absolutePath);
   } catch {
