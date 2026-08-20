@@ -4,10 +4,17 @@ import type { StoreConfig } from "@/lib/store-config.types";
 
 interface ContactHeroProps {
   config: StoreConfig;
+  title?: string;
+  description?: string;
   heroImageUrl?: string;
 }
 
-export function ContactHero({ config, heroImageUrl }: ContactHeroProps) {
+export function ContactHero({
+  config,
+  title = "Давайте поговорим",
+  description = "Расскажите, что вы ищете — мы поможем подобрать недвижимость, организовать просмотр и ответим на все вопросы.",
+  heroImageUrl,
+}: ContactHeroProps) {
   return (
     <section className="border-b border-border/60 pb-10 pt-10 md:pb-12 md:pt-14">
       <Container>
@@ -16,10 +23,9 @@ export function ContactHero({ config, heroImageUrl }: ContactHeroProps) {
             <p className="text-sm font-medium uppercase tracking-widest text-accent">
               {config.brand}
             </p>
-            <h1 className="heading-section mt-4 text-foreground">Давайте поговорим</h1>
+            <h1 className="heading-section mt-4 text-foreground">{title}</h1>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-muted md:text-lg">
-              Расскажите, что вы ищете — мы поможем подобрать недвижимость, организовать просмотр и
-              ответим на все вопросы.
+              {description}
             </p>
           </div>
 

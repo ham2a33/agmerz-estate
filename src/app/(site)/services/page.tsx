@@ -7,6 +7,7 @@ import { WhyAgmerz } from "@/components/services/WhyAgmerz";
 import { ServicesCta } from "@/components/services/ServicesCta";
 import { ServicesFaq } from "@/components/services/ServicesFaq";
 import { ServicesFinalCta } from "@/components/services/ServicesFinalCta";
+import { getPagesConfig } from "@/lib/pages";
 import { getStoreConfig } from "@/lib/store-config.server";
 
 export const metadata: Metadata = {
@@ -16,11 +17,18 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const config = await getStoreConfig();
+  const [config, pages] = await Promise.all([getStoreConfig(), getPagesConfig()]);
+  const hero = pages.services;
 
   return (
     <>
-      <ServicesHero brand={config.brand} logoUrl={config.logoUrl} />
+      <ServicesHero
+        brand={config.brand}
+        logoUrl={config.logoUrl}
+        title={hero.title}
+        description={hero.description}
+        imageUrl={hero.imageUrl || undefined}
+      />
       <ServicesGrid />
       <FeaturedService />
       <HowWeWork />

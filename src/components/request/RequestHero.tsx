@@ -4,10 +4,17 @@ import { BrandLogo } from "@/components/brand/BrandLogo";
 
 interface RequestHeroProps {
   logoUrl: string;
+  title?: string;
+  description?: string;
   heroImageUrl?: string;
 }
 
-export function RequestHero({ logoUrl, heroImageUrl }: RequestHeroProps) {
+export function RequestHero({
+  logoUrl,
+  title = "Найти недвижимость",
+  description = "Расскажите, какую недвижимость вы ищете — мы подберём подходящие варианты под ваши требования.",
+  heroImageUrl,
+}: RequestHeroProps) {
   return (
     <section className="border-b border-border/60 bg-surface-muted/40 pb-12 pt-10 md:pb-16 md:pt-14">
       <Container>
@@ -17,10 +24,9 @@ export function RequestHero({ logoUrl, heroImageUrl }: RequestHeroProps) {
             <p className="text-sm font-medium uppercase tracking-widest text-accent">
               Персональный подбор
             </p>
-            <h1 className="heading-section mt-4 text-foreground">Найти недвижимость</h1>
+            <h1 className="heading-section mt-4 text-foreground">{title}</h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted md:text-lg">
-              Расскажите, какую недвижимость вы ищете — мы подберём подходящие варианты под ваши
-              требования.
+              {description}
             </p>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted">
               <li className="flex items-center gap-2">

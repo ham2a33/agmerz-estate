@@ -208,6 +208,7 @@ model SiteSettings {
   logoUrl               String        @default("")
   faviconUrl            String        @default("")
   homepageConfig        Json?
+  pagesConfig           Json?
   updatedAt             DateTime      @updatedAt
 }
 

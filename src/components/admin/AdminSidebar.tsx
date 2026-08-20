@@ -27,6 +27,7 @@ const navSections = [
     title: "КОНТЕНТ",
     items: [
       { href: "/admin/homepage", label: "Главная" },
+      { href: "/admin/content", label: "Контент сайта" },
       { href: "/admin/blog", label: "Блог" },
       { href: "/admin/reviews", label: "Отзывы" },
       { href: "/admin/media", label: "Медиа" },

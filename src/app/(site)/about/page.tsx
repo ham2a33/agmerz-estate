@@ -8,6 +8,7 @@ import { AboutExperience } from "@/components/about/AboutExperience";
 import { AboutTimeline } from "@/components/about/AboutTimeline";
 import { AboutTrust } from "@/components/about/AboutTrust";
 import { AboutFinalCta } from "@/components/about/AboutFinalCta";
+import { getPagesConfig } from "@/lib/pages";
 import { getStoreConfig } from "@/lib/store-config.server";
 
 export const metadata: Metadata = {
@@ -17,11 +18,19 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const config = await getStoreConfig();
+  const [config, pages] = await Promise.all([getStoreConfig(), getPagesConfig()]);
+  const hero = pages.about;
 
   return (
     <>
-      <AboutHero brand={config.brand} logoUrl={config.logoUrl} city={config.address.city} />
+      <AboutHero
+        brand={config.brand}
+        logoUrl={config.logoUrl}
+        city={config.address.city}
+        title={hero.title}
+        description={hero.description}
+        imageUrl={hero.imageUrl || undefined}
+      />
       <AboutStory />
       <AboutApproach />
       <AboutLocalExpertise />

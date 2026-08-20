@@ -36,6 +36,25 @@ async function findMediaUsage(url: string): Promise<string[]> {
       if (images.requestHero === url) usage.push("Request Hero");
       if (images.contactHero === url) usage.push("Contact Hero");
     }
+
+    const pagesConfig = settings.pagesConfig as Record<string, { imageUrl?: string }> | null;
+    if (pagesConfig) {
+      const pageLabels: Record<string, string> = {
+        catalog: "Catalog Hero",
+        services: "Services Hero",
+        about: "About Hero",
+        blog: "Blog Hero",
+        contacts: "Contacts Hero",
+        favorites: "Favorites Hero",
+        request: "Request Hero",
+      };
+
+      for (const [key, label] of Object.entries(pageLabels)) {
+        if (pagesConfig[key]?.imageUrl === url) {
+          usage.push(`Page: ${label}`);
+        }
+      }
+    }
   }
 
   for (const image of properties) {

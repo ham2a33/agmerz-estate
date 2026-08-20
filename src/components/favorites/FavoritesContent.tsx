@@ -8,6 +8,7 @@ import { FavoritesGrid, FavoritesGridSkeleton } from "@/components/favorites/Fav
 import { FavoritesFinalCta } from "@/components/favorites/FavoritesFinalCta";
 import { getObjectCountLabel } from "@/lib/favorites-data";
 import { FAVORITES_CHANGED_EVENT, pruneInvalidFavorites } from "@/lib/favorites";
+import type { PageHeroConfig } from "@/types/pages";
 import type { Property } from "@/types";
 
 type FavoritesState =
@@ -33,7 +34,7 @@ function resolveFavoriteProperties(ids: string[], properties: Property[]): Prope
     .filter((property): property is Property => property !== undefined);
 }
 
-export function FavoritesContent() {
+export function FavoritesContent({ hero }: { hero: PageHeroConfig }) {
   const [state, setState] = useState<FavoritesState>({ status: "loading" });
 
   const refreshFavorites = useCallback(async () => {
@@ -80,7 +81,7 @@ export function FavoritesContent() {
 
   return (
     <>
-      <FavoritesHero />
+      <FavoritesHero hero={hero} />
 
       <section className="section-padding pt-10 md:pt-12">
         <Container>

@@ -13,8 +13,10 @@ const DEFAULT_IMAGE =
 export function CatalogHero({
   title = "Каталог недвижимости",
   description = "Подберите квартиру, дом или коммерческий объект, который подходит именно вам.",
-  imageUrl = DEFAULT_IMAGE,
+  imageUrl,
 }: CatalogHeroProps) {
+  const resolvedImageUrl = imageUrl || DEFAULT_IMAGE;
+
   return (
     <section className="border-b border-border/60 pb-10 pt-10 md:pb-12 md:pt-14">
       <Container>
@@ -28,7 +30,7 @@ export function CatalogHero({
 
           <div className="relative hidden aspect-[4/3] overflow-hidden rounded-2xl lg:block">
             <Image
-              src={imageUrl}
+              src={resolvedImageUrl}
               alt={title}
               fill
               sizes="320px"

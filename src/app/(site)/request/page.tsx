@@ -4,7 +4,7 @@ import { PropertyRequestForm } from "@/components/forms/PropertyRequestForm";
 import { RequestHero } from "@/components/request/RequestHero";
 import { RequestSidebar } from "@/components/request/RequestSidebar";
 import { getStoreConfig } from "@/lib/store-config.server";
-import { getHomepageConfig } from "@/lib/homepage";
+import { getPagesConfig } from "@/lib/pages";
 
 export const metadata: Metadata = {
   title: "Найти недвижимость — AGMERZ ESTATE",
@@ -13,13 +13,16 @@ export const metadata: Metadata = {
 };
 
 export default async function RequestPage() {
-  const [config, homepage] = await Promise.all([getStoreConfig(), getHomepageConfig()]);
+  const [config, pages] = await Promise.all([getStoreConfig(), getPagesConfig()]);
+  const hero = pages.request;
 
   return (
     <>
       <RequestHero
         logoUrl={config.logoUrl}
-        heroImageUrl={homepage.sectionImages.requestHero}
+        title={hero.title}
+        description={hero.description}
+        heroImageUrl={hero.imageUrl || undefined}
       />
 
       <section className="section-padding bg-background">

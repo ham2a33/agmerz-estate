@@ -1,12 +1,22 @@
+import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
 interface ServicesHeroProps {
   brand: string;
   logoUrl: string;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
 }
 
-export function ServicesHero({ brand, logoUrl }: ServicesHeroProps) {
+export function ServicesHero({
+  brand,
+  logoUrl,
+  title = "Полный комплекс услуг в сфере недвижимости",
+  description = "Помогаем найти, купить, продать или арендовать недвижимость — от первого обращения до завершения сделки.",
+  imageUrl,
+}: ServicesHeroProps) {
   return (
     <section className="border-b border-border/60 bg-background pb-14 pt-12 md:pb-20 md:pt-16">
       <Container>
@@ -17,15 +27,24 @@ export function ServicesHero({ brand, logoUrl }: ServicesHeroProps) {
             Наши услуги
           </p>
 
-          <h1 className="heading-section mt-5 text-foreground">
-            Полный комплекс услуг
-            <span className="block">в сфере недвижимости</span>
-          </h1>
+          <h1 className="heading-section mt-5 text-foreground">{title}</h1>
 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted md:text-lg">
-            Помогаем найти, купить, продать или арендовать недвижимость — от первого обращения до
-            завершения сделки.
+            {description}
           </p>
+
+          {imageUrl && (
+            <div className="relative mt-10 aspect-[16/10] w-full max-w-xl overflow-hidden rounded-2xl">
+              <Image
+                src={imageUrl}
+                alt={title}
+                fill
+                sizes="(max-width: 768px) 100vw, 576px"
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
 
           <div className="mt-10 flex items-center gap-4">
             <span className="h-px w-12 bg-border" aria-hidden="true" />
