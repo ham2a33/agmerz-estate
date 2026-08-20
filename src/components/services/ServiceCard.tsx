@@ -10,7 +10,7 @@ const layoutClasses: Record<ServiceItem["layout"], string> = {
 };
 
 interface ServiceCardProps {
-  service: ServiceItem;
+  service: ServiceItem & { imageAlt?: string };
 }
 
 export function ServiceCard({ service }: ServiceCardProps) {
@@ -25,7 +25,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
       >
         <Image
           src={service.image}
-          alt={service.title}
+          alt={service.imageAlt ?? service.title}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover image-hover"

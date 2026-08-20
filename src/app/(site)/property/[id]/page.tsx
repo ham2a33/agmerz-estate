@@ -8,6 +8,7 @@ import {
   getPropertyJsonLd,
   getSeoDescription,
 } from "@/lib/property-helpers";
+import { getPropertyFallbackPools } from "@/lib/image-slots";
 import { getPublicPropertyIds } from "@/lib/properties";
 
 interface PropertyPageProps {
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: PropertyPageProps): Promise<M
   }
 
   const description = getSeoDescription(property);
-  const images = getGalleryImages(property);
+  const fallbackPools = await getPropertyFallbackPools();
+  const images = getGalleryImages(property, fallbackPools);
   const title = `${property.title} — AGMERZ ESTATE`;
 
   return {

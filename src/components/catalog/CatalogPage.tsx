@@ -4,6 +4,7 @@ import { getAllProperties } from "@/lib/properties";
 import { getCategoryBySlug } from "@/lib/categories";
 import { getCategoryImageUrl } from "@/lib/category-image-fallback";
 import { getPagesConfig } from "@/lib/pages";
+import { resolveImageSlot } from "@/lib/image-slots";
 import type { CatalogCategorySlug } from "@/lib/catalog";
 import { CatalogView, CatalogViewFallback } from "@/components/catalog/CatalogView";
 
@@ -28,10 +29,13 @@ export async function CatalogPage({ categorySlug }: Pick<CatalogPageConfig, "cat
   let heroImageUrl: string | undefined;
 
   if (categorySlug === "all") {
-    const pages = await getPagesConfig();
+    const [pages, hero] = await Promise.all([
+      getPagesConfig(),
+      resolveImageSlot("pages.catalog.hero"),
+    ]);
     heroTitle = pages.catalog.title;
     heroDescription = pages.catalog.description;
-    heroImageUrl = pages.catalog.imageUrl || undefined;
+    heroImageUrl = hero.url || undefined;
   } else {
     const category = await getCategoryBySlug(categorySlug);
     if (category) {

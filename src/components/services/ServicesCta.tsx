@@ -2,8 +2,11 @@ import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { investmentService, sellRentCta } from "@/lib/services-data";
+import { resolveImageSlot } from "@/lib/image-slots";
 
-export function ServicesCta() {
+export async function ServicesCta() {
+  const bannerImage = await resolveImageSlot("services.sell-rent-cta");
+
   return (
     <>
       <section className="section-padding pb-0">
@@ -11,8 +14,8 @@ export function ServicesCta() {
           <div className="relative overflow-hidden rounded-3xl">
             <div className="relative aspect-[4/3] md:aspect-[21/9]">
               <Image
-                src={sellRentCta.image}
-                alt=""
+                src={bannerImage.url}
+                alt={bannerImage.alt || sellRentCta.title}
                 fill
                 sizes="100vw"
                 className="object-cover"

@@ -14,6 +14,7 @@ import {
   getGalleryImages,
   getSimilarProperties,
 } from "@/lib/property-helpers";
+import { getPropertyFallbackPools } from "@/lib/image-slots";
 import type { Property } from "@/types";
 import type { StoreConfig } from "@/lib/store-config.types";
 
@@ -24,7 +25,8 @@ interface PropertyPageContentProps {
 }
 
 export async function PropertyPageContent({ property, shareUrl, config }: PropertyPageContentProps) {
-  const images = getGalleryImages(property);
+  const fallbackPools = await getPropertyFallbackPools();
+  const images = getGalleryImages(property, fallbackPools);
   const similar = await getSimilarProperties(property);
 
   return (

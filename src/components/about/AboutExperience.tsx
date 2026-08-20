@@ -1,8 +1,14 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { aboutClientExperience, aboutTeam } from "@/lib/about-data";
+import { resolveImageSlot } from "@/lib/image-slots";
 
-export function AboutExperience() {
+export async function AboutExperience() {
+  const [clientImage, teamImage] = await Promise.all([
+    resolveImageSlot("about.client-experience"),
+    resolveImageSlot("about.team"),
+  ]);
+
   return (
     <>
       <section className="section-padding">
@@ -26,8 +32,8 @@ export function AboutExperience() {
 
             <div className="relative aspect-[4/3] overflow-hidden rounded-3xl lg:aspect-[5/4]">
               <Image
-                src={aboutClientExperience.image}
-                alt="Клиентский опыт AGMERZ ESTATE"
+                src={clientImage.url}
+                alt={clientImage.alt || "Клиентский опыт AGMERZ ESTATE"}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -42,8 +48,8 @@ export function AboutExperience() {
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
             <div className="relative aspect-[4/3] overflow-hidden rounded-3xl lg:aspect-[5/4]">
               <Image
-                src={aboutTeam.image}
-                alt="Команда AGMERZ ESTATE"
+                src={teamImage.url}
+                alt={teamImage.alt || "Команда AGMERZ ESTATE"}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"

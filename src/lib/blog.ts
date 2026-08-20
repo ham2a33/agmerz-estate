@@ -1,5 +1,6 @@
 import { mockBlogPosts } from "@/lib/mock-data/blog-posts";
 import { articleContents, type ArticleBlock } from "@/lib/blog-content";
+import { resolveImageSlot } from "@/lib/image-slots";
 import {
   getArticleBlocksForSlug,
   getPostBySlug as getDbPostBySlug,
@@ -77,13 +78,33 @@ export async function getArticleBlocks(post: BlogPost): Promise<ArticleBlock[]> 
   }
 
   const blocks = articleContents[post.slug];
-  if (blocks && blocks.length > 0) return blocks;
+  if (blocks && blocks.length > 0) {
+    return applyArticleImageSlots(post.slug, blocks);
+  }
 
   if (post.content.trim()) {
     return [{ type: "paragraph", text: post.content }];
   }
 
   return [{ type: "paragraph", text: post.excerpt }];
+}
+
+async function applyArticleImageSlots(
+  slug: string,
+  blocks: ArticleBlock[],
+): Promise<ArticleBlock[]> {
+  if (slug !== "chek-list-pered-pokupkoy-doma") return blocks;
+
+  const inlineImage = await resolveImageSlot("blog.article-inline.house-checklist");
+
+  return blocks.map((block) => {
+    if (block.type !== "image") return block;
+    return {
+      ...block,
+      src: inlineImage.url || block.src,
+      alt: inlineImage.alt || block.alt,
+    };
+  });
 }
 
 export async function getReadingTimeMinutes(post: BlogPost): Promise<number | null> {

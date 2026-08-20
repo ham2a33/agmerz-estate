@@ -2,16 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { aboutCategories, aboutLocalExpertise } from "@/lib/about-data";
+import { resolveImageSlot } from "@/lib/image-slots";
 
-export function AboutLocalExpertise() {
+export async function AboutLocalExpertise() {
+  const image = await resolveImageSlot("about.local-expertise");
+
   return (
     <section className="section-padding">
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl lg:aspect-[5/4] lg:order-2">
             <Image
-              src={aboutLocalExpertise.image}
-              alt="Грозный — локальная экспертиза AGMERZ ESTATE"
+              src={image.url}
+              alt={image.alt || "Грозный — локальная экспертиза AGMERZ ESTATE"}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"

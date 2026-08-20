@@ -30,6 +30,10 @@ async function findMediaUsage(url: string): Promise<string[]> {
     if (settings.ogImage === url) usage.push("SEO: OG Image");
 
     const config = settings.homepageConfig as Record<string, unknown> | null;
+    if (config?.hero && typeof config.hero === "object") {
+      const hero = config.hero as Record<string, string>;
+      if (hero.imageUrl === url) usage.push("Homepage Hero");
+    }
     if (config?.sectionImages && typeof config.sectionImages === "object") {
       const images = config.sectionImages as Record<string, string>;
       if (images.homepageHero === url) usage.push("Homepage Hero");
@@ -52,6 +56,19 @@ async function findMediaUsage(url: string): Promise<string[]> {
       for (const [key, label] of Object.entries(pageLabels)) {
         if (pagesConfig[key]?.imageUrl === url) {
           usage.push(`Page: ${label}`);
+        }
+      }
+    }
+
+    const siteImagesConfig = settings.siteImagesConfig as Record<
+      string,
+      { url?: string; alt?: string }
+    > | null;
+
+    if (siteImagesConfig) {
+      for (const [slotId, value] of Object.entries(siteImagesConfig)) {
+        if (value?.url === url) {
+          usage.push(`Site image: ${slotId}`);
         }
       }
     }

@@ -1,38 +1,12 @@
 import { getPropertyById as getStoredPropertyById, getAllProperties } from "@/lib/properties";
 import type { Property, PropertyType } from "@/types";
 
-const IMAGE_POOLS: Record<PropertyType, string[]> = {
-  apartment: [
-    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80",
-    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80",
-    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80",
-  ],
-  house: [
-    "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
-    "https://images.unsplash.com/photo-1605276374101-dee2a0ed3cd6?w=1200&q=80",
-    "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&q=80",
-  ],
-  commercial: [
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
-    "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
-    "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&q=80",
-    "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=80",
-  ],
-  land: [
-    "https://images.unsplash.com/photo-1500382017468-90403fed87ef?w=1200&q=80",
-    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80",
-    "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=1200&q=80",
-    "https://images.unsplash.com/photo-1500382017468-90403fed87ef?w=1200&q=81",
-  ],
-  rent: [
-    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80",
-    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80",
-    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80",
-    "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=1200&q=80",
-  ],
-};
+const DEFAULT_IMAGE_POOL = [
+  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80",
+  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80",
+  "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80",
+];
 
 const CATEGORY_HREF: Record<PropertyType, string> = {
   apartment: "/catalog/apartments",
@@ -47,10 +21,13 @@ export async function getPropertyById(id: string): Promise<Property | undefined>
   return property ?? undefined;
 }
 
-export function getGalleryImages(property: Property): string[] {
+export function getGalleryImages(
+  property: Property,
+  pools?: Partial<Record<PropertyType, string[]>>,
+): string[] {
   if (property.images.length >= 2) return property.images;
 
-  const pool = IMAGE_POOLS[property.type];
+  const pool = pools?.[property.type]?.length ? pools[property.type]! : DEFAULT_IMAGE_POOL;
   const primary = property.images[0] ?? pool[0];
   const rest = pool.filter((img) => img !== primary);
 

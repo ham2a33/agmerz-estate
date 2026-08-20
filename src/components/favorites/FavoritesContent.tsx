@@ -9,6 +9,7 @@ import { FavoritesFinalCta } from "@/components/favorites/FavoritesFinalCta";
 import { getObjectCountLabel } from "@/lib/favorites-data";
 import { FAVORITES_CHANGED_EVENT, pruneInvalidFavorites } from "@/lib/favorites";
 import type { PageHeroConfig } from "@/types/pages";
+import type { ImageSlotValue } from "@/lib/image-slots/types";
 import type { Property } from "@/types";
 
 type FavoritesState =
@@ -34,7 +35,13 @@ function resolveFavoriteProperties(ids: string[], properties: Property[]): Prope
     .filter((property): property is Property => property !== undefined);
 }
 
-export function FavoritesContent({ hero }: { hero: PageHeroConfig }) {
+export function FavoritesContent({
+  hero,
+  emptyStateImage,
+}: {
+  hero: PageHeroConfig;
+  emptyStateImage: ImageSlotValue;
+}) {
   const [state, setState] = useState<FavoritesState>({ status: "loading" });
 
   const refreshFavorites = useCallback(async () => {
@@ -98,7 +105,12 @@ export function FavoritesContent({ hero }: { hero: PageHeroConfig }) {
 
           {isLoading && <FavoritesGridSkeleton />}
 
-          {!isLoading && count === 0 && <FavoritesEmptyState />}
+          {!isLoading && count === 0 && (
+            <FavoritesEmptyState
+              imageUrl={emptyStateImage.url}
+              imageAlt={emptyStateImage.alt || "Избранное AGMERZ ESTATE"}
+            />
+          )}
 
           {!isLoading && count > 0 && (
             <>

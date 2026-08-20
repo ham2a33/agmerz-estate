@@ -9,6 +9,7 @@ import { ContactFaq } from "@/components/contacts/ContactFaq";
 import { ContactFinalCta } from "@/components/contacts/ContactFinalCta";
 import { getStoreConfig } from "@/lib/store-config.server";
 import { getPagesConfig } from "@/lib/pages";
+import { resolveImageSlot } from "@/lib/image-slots";
 
 export const metadata: Metadata = {
   title: "Контакты — AGMERZ ESTATE",
@@ -17,7 +18,11 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactsPage() {
-  const [config, pages] = await Promise.all([getStoreConfig(), getPagesConfig()]);
+  const [config, pages, heroImage] = await Promise.all([
+    getStoreConfig(),
+    getPagesConfig(),
+    resolveImageSlot("pages.contacts.hero"),
+  ]);
   const hero = pages.contacts;
 
   return (
@@ -26,7 +31,7 @@ export default async function ContactsPage() {
         config={config}
         title={hero.title}
         description={hero.description}
-        heroImageUrl={hero.imageUrl || undefined}
+        heroImageUrl={heroImage.url || undefined}
       />
 
       <section className="section-padding pb-0">

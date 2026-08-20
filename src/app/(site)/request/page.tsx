@@ -5,6 +5,7 @@ import { RequestHero } from "@/components/request/RequestHero";
 import { RequestSidebar } from "@/components/request/RequestSidebar";
 import { getStoreConfig } from "@/lib/store-config.server";
 import { getPagesConfig } from "@/lib/pages";
+import { resolveImageSlot } from "@/lib/image-slots";
 
 export const metadata: Metadata = {
   title: "Найти недвижимость — AGMERZ ESTATE",
@@ -13,7 +14,11 @@ export const metadata: Metadata = {
 };
 
 export default async function RequestPage() {
-  const [config, pages] = await Promise.all([getStoreConfig(), getPagesConfig()]);
+  const [config, pages, heroImage] = await Promise.all([
+    getStoreConfig(),
+    getPagesConfig(),
+    resolveImageSlot("pages.request.hero"),
+  ]);
   const hero = pages.request;
 
   return (
@@ -22,7 +27,7 @@ export default async function RequestPage() {
         logoUrl={config.logoUrl}
         title={hero.title}
         description={hero.description}
-        heroImageUrl={hero.imageUrl || undefined}
+        heroImageUrl={heroImage.url || undefined}
       />
 
       <section className="section-padding bg-background">

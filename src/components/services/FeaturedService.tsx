@@ -2,16 +2,19 @@ import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { featuredService } from "@/lib/services-data";
+import { resolveImageSlot } from "@/lib/image-slots";
 
-export function FeaturedService() {
+export async function FeaturedService() {
+  const image = await resolveImageSlot("services.featured");
+
   return (
     <section className="section-padding bg-surface-muted/50">
       <Container>
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl lg:aspect-[5/4]">
             <Image
-              src={featuredService.image}
-              alt={featuredService.title}
+              src={image.url}
+              alt={image.alt || featuredService.title}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"

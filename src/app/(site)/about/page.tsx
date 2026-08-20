@@ -9,6 +9,7 @@ import { AboutTimeline } from "@/components/about/AboutTimeline";
 import { AboutTrust } from "@/components/about/AboutTrust";
 import { AboutFinalCta } from "@/components/about/AboutFinalCta";
 import { getPagesConfig } from "@/lib/pages";
+import { resolveImageSlot } from "@/lib/image-slots";
 import { getStoreConfig } from "@/lib/store-config.server";
 
 export const metadata: Metadata = {
@@ -18,7 +19,11 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [config, pages] = await Promise.all([getStoreConfig(), getPagesConfig()]);
+  const [config, pages, heroImage] = await Promise.all([
+    getStoreConfig(),
+    getPagesConfig(),
+    resolveImageSlot("pages.about.hero"),
+  ]);
   const hero = pages.about;
 
   return (
@@ -29,7 +34,7 @@ export default async function AboutPage() {
         city={config.address.city}
         title={hero.title}
         description={hero.description}
-        imageUrl={hero.imageUrl || undefined}
+        imageUrl={heroImage.url || undefined}
       />
       <AboutStory />
       <AboutApproach />

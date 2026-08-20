@@ -8,6 +8,7 @@ import { ServicesCta } from "@/components/services/ServicesCta";
 import { ServicesFaq } from "@/components/services/ServicesFaq";
 import { ServicesFinalCta } from "@/components/services/ServicesFinalCta";
 import { getPagesConfig } from "@/lib/pages";
+import { resolveImageSlot } from "@/lib/image-slots";
 import { getStoreConfig } from "@/lib/store-config.server";
 
 export const metadata: Metadata = {
@@ -17,7 +18,11 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const [config, pages] = await Promise.all([getStoreConfig(), getPagesConfig()]);
+  const [config, pages, heroImage] = await Promise.all([
+    getStoreConfig(),
+    getPagesConfig(),
+    resolveImageSlot("pages.services.hero"),
+  ]);
   const hero = pages.services;
 
   return (
@@ -27,7 +32,7 @@ export default async function ServicesPage() {
         logoUrl={config.logoUrl}
         title={hero.title}
         description={hero.description}
-        imageUrl={hero.imageUrl || undefined}
+        imageUrl={heroImage.url || undefined}
       />
       <ServicesGrid />
       <FeaturedService />

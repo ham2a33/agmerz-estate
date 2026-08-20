@@ -1,8 +1,11 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { reviewsHero } from "@/lib/reviews-data";
+import { resolveImageSlot } from "@/lib/image-slots";
 
-export function ReviewsHero() {
+export async function ReviewsHero() {
+  const heroImage = await resolveImageSlot("pages.reviews.hero");
+
   return (
     <section className="border-b border-border/60 pb-10 pt-10 md:pb-12 md:pt-14">
       <Container>
@@ -17,16 +20,18 @@ export function ReviewsHero() {
             </p>
           </div>
 
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl lg:aspect-[5/4]">
-            <Image
-              src={reviewsHero.image}
-              alt="Отзывы клиентов AGMERZ ESTATE"
-              fill
-              sizes="(max-width: 1024px) 100vw, 320px"
-              className="object-cover"
-              priority
-            />
-          </div>
+          {heroImage.url && (
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl lg:aspect-[5/4]">
+              <Image
+                src={heroImage.url}
+                alt={heroImage.alt || "Отзывы клиентов AGMERZ ESTATE"}
+                fill
+                sizes="(max-width: 1024px) 100vw, 320px"
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
         </div>
       </Container>
     </section>

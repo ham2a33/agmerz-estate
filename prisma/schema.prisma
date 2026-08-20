@@ -209,6 +209,7 @@ model SiteSettings {
   faviconUrl            String        @default("")
   homepageConfig        Json?
   pagesConfig           Json?
+  siteImagesConfig      Json?
   updatedAt             DateTime      @updatedAt
 }
 
