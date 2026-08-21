@@ -213,6 +213,14 @@ export function validatePropertyForm(values: PropertyFormValues): Record<string,
     errors.area = "Площадь должна быть больше 0";
   }
 
+  if (!values.address.trim()) {
+    errors.address = "Укажите адрес";
+  }
+
+  if (!values.district.trim()) {
+    errors.district = "Выберите район";
+  }
+
   if (values.rooms.trim()) {
     const rooms = Number(values.rooms);
     if (Number.isNaN(rooms) || rooms < 0) errors.rooms = "Комнат не может быть меньше 0";

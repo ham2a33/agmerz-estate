@@ -113,7 +113,7 @@ export function AdminPropertyForm({ mode, property }: AdminPropertyFormProps) {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setSubmitError("Не удалось сохранить объект. Проверьте данные и попробуйте снова.");
+        setSubmitError(data.error ?? "Не удалось сохранить объект. Проверьте данные и попробуйте снова.");
         return;
       }
 
@@ -256,12 +256,13 @@ export function AdminPropertyForm({ mode, property }: AdminPropertyFormProps) {
 
             <Section title="04 Адрес">
               <Input
-                label="Адрес"
+                label="Адрес *"
                 value={values.address}
                 onChange={(event) => updateField("address", event.target.value)}
               />
+              {errors.address && <p className="text-sm text-red-600">{errors.address}</p>}
               <label className="flex flex-col gap-1.5 text-sm">
-                <span className="font-medium">Район</span>
+                <span className="font-medium">Район *</span>
                 <select
                   value={values.district}
                   onChange={(event) => updateField("district", event.target.value)}
@@ -275,6 +276,7 @@ export function AdminPropertyForm({ mode, property }: AdminPropertyFormProps) {
                   ))}
                 </select>
               </label>
+              {errors.district && <p className="text-sm text-red-600">{errors.district}</p>}
               <div className="grid gap-4 md:grid-cols-2">
                 <Input
                   label="Latitude"

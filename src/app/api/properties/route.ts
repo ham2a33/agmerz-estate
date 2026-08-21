@@ -50,6 +50,12 @@ export async function POST(request: NextRequest) {
     const property = await createProperty(input);
     return apiSuccess(property, 201);
   } catch (error) {
+    if (error instanceof Error && error.message.startsWith("Category not found")) {
+      return apiError(
+        "Категория не найдена в базе данных. Убедитесь, что выполнен prisma db seed.",
+        400,
+      );
+    }
     return handleApiError("properties:POST", error);
   }
 }
