@@ -72,16 +72,11 @@ export async function resolveCategoryForProperty(slug: string) {
     throw new Error(`Category not found: ${slug}`);
   }
 
-  return prisma.category.upsert({
-    where: { slug },
-    update: {
-      name: mock.title,
-      description: mock.description,
-      isActive: true,
-      sortOrder: mockIndex + 1,
-    },
-    create: {
-      id: String(mockIndex + 1),
+  const id = await generateCategoryId();
+
+  return prisma.category.create({
+    data: {
+      id,
       name: mock.title,
       slug: mock.slug,
       description: mock.description,
