@@ -3,6 +3,7 @@ import { checkDatabaseConnection } from "@/lib/db";
 import { mockProperties } from "@/lib/mock-data/properties";
 import { logError } from "@/lib/logger";
 import { mapProperty, propertyInclude } from "@/lib/mappers";
+import { resolveCategoryForProperty } from "@/lib/repositories/categories";
 import type { PaginatedResult, PaginationParams } from "@/lib/pagination";
 import { buildPaginationMeta, getSkipTake } from "@/lib/pagination";
 import type { Property, PropertyCreateInput, PropertyUpdateInput } from "@/types";
@@ -193,10 +194,7 @@ export async function isSlugAvailable(slug: string, excludeId?: string): Promise
 }
 
 export async function createProperty(input: PropertyCreateInput): Promise<Property> {
-  const category = await prisma.category.findUnique({ where: { slug: input.category } });
-  if (!category) {
-    throw new Error(`Category not found: ${input.category}`);
-  }
+  const category = await resolveCategoryForProperty(input.category);
 
   const id = await generatePropertyId();
 
@@ -243,10 +241,7 @@ export async function updateProperty(
 
   let categoryId = existing.categoryId;
   if (input.category) {
-    const category = await prisma.category.findUnique({ where: { slug: input.category } });
-    if (!category) {
-      throw new Error(`Category not found: ${input.category}`);
-    }
+    const category = await resolveCategoryForProperty(input.category);
     categoryId = category.id;
   }
 

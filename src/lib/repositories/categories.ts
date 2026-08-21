@@ -62,6 +62,36 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
   }, MOCK_ADMIN_CATEGORIES.find((category) => category.slug === slug) ?? null);
 }
 
+export async function resolveCategoryForProperty(slug: string) {
+  const existing = await prisma.category.findUnique({ where: { slug } });
+  if (existing) return existing;
+
+  const mockIndex = mockCategories.findIndex((category) => category.slug === slug);
+  const mock = mockIndex >= 0 ? mockCategories[mockIndex] : null;
+  if (!mock) {
+    throw new Error(`Category not found: ${slug}`);
+  }
+
+  return prisma.category.upsert({
+    where: { slug },
+    update: {
+      name: mock.title,
+      description: mock.description,
+      isActive: true,
+      sortOrder: mockIndex + 1,
+    },
+    create: {
+      id: String(mockIndex + 1),
+      name: mock.title,
+      slug: mock.slug,
+      description: mock.description,
+      image: mock.image,
+      isActive: true,
+      sortOrder: mockIndex + 1,
+    },
+  });
+}
+
 async function generateCategoryId(): Promise<string> {
   const result = await prisma.category.findMany({ select: { id: true } });
   const numericIds = result

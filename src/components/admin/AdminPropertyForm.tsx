@@ -18,6 +18,7 @@ import {
   type PropertyFormValues,
 } from "@/lib/property-form";
 import type { Property, PropertyStatus } from "@/types";
+import { parseValidationErrorFields } from "@/lib/validation/parse";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { AdminImageManager } from "./AdminImageManager";
@@ -113,7 +114,10 @@ export function AdminPropertyForm({ mode, property }: AdminPropertyFormProps) {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        setSubmitError(data.error ?? "Не удалось сохранить объект. Проверьте данные и попробуйте снова.");
+        const message =
+          data.error ?? "Не удалось сохранить объект. Проверьте данные и попробуйте снова.";
+        setSubmitError(message);
+        setErrors((current) => ({ ...current, ...parseValidationErrorFields(message) }));
         return;
       }
 
