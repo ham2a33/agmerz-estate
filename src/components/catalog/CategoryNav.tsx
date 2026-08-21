@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CATEGORY_LINKS, type CatalogCategorySlug } from "@/lib/catalog";
+import { CATEGORY_LINKS } from "@/lib/catalog";
 
 interface CategoryNavProps {
-  categorySlug: CatalogCategorySlug;
+  categorySlug: string;
 }
 
 export function CategoryNav({ categorySlug }: CategoryNavProps) {

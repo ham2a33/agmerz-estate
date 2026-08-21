@@ -18,6 +18,8 @@ export async function generateMetadata({ params }: AdminPropertyDetailPageProps)
   };
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPropertyDetailPage({ params }: AdminPropertyDetailPageProps) {
   const { id } = await params;
   const property = await getPropertyById(id);

@@ -9,11 +9,12 @@ import {
   getSeoDescription,
 } from "@/lib/property-helpers";
 import { getPropertyFallbackPools } from "@/lib/image-slots";
-import { getPublicPropertyIds } from "@/lib/properties";
 
 interface PropertyPageProps {
   params: Promise<{ id: string }>;
 }
+
+export const dynamic = "force-dynamic";
 
 async function getShareUrl(id: string): Promise<string> {
   return `/property/${id}`;
@@ -65,13 +66,4 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
       <PropertyPageContent property={property} shareUrl={shareUrl} config={config} />
     </>
   );
-}
-
-export async function generateStaticParams() {
-  try {
-    const ids = await getPublicPropertyIds();
-    return ids.map((id) => ({ id }));
-  } catch {
-    return [];
-  }
 }

@@ -5,11 +5,10 @@ import { getCategoryBySlug } from "@/lib/categories";
 import { getCategoryImageUrl } from "@/lib/category-image-fallback";
 import { getPagesConfig } from "@/lib/pages";
 import { resolveImageSlot } from "@/lib/image-slots";
-import type { CatalogCategorySlug } from "@/lib/catalog";
 import { CatalogView, CatalogViewFallback } from "@/components/catalog/CatalogView";
 
 interface CatalogPageConfig {
-  categorySlug: CatalogCategorySlug;
+  categorySlug: string;
   title: string;
   description: string;
 }

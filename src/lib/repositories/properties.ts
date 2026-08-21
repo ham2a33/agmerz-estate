@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { checkDatabaseConnection } from "@/lib/db";
+import { shouldUseMockDataFallback } from "@/lib/data-source";
 import { mockProperties } from "@/lib/mock-data/properties";
 import { logError } from "@/lib/logger";
 import { mapProperty, propertyInclude } from "@/lib/mappers";
@@ -90,11 +91,15 @@ function filterMockProperties(query?: PropertyListQuery): Property[] {
   return items;
 }
 
+function getMockProperties(query?: PropertyListQuery): Property[] {
+  return shouldUseMockDataFallback() ? filterMockProperties(query) : [];
+}
+
 export async function listProperties(query?: PropertyListQuery): Promise<Property[]> {
   try {
     const connected = await checkDatabaseConnection();
     if (!connected) {
-      return filterMockProperties(query);
+      return getMockProperties(query);
     }
 
     const records = await prisma.property.findMany({
@@ -106,7 +111,7 @@ export async function listProperties(query?: PropertyListQuery): Promise<Propert
     return records.map(mapProperty);
   } catch (error) {
     logError("properties:list", error);
-    return filterMockProperties(query);
+    return getMockProperties(query);
   }
 }
 
@@ -121,7 +126,7 @@ export async function listPropertiesPaginated(
   try {
     const connected = await checkDatabaseConnection();
     if (!connected) {
-      const items = filterMockProperties(query);
+      const items = getMockProperties(query);
       const start = (params.page - 1) * params.limit;
       const paginatedItems = items.slice(start, start + params.limit);
 
@@ -148,7 +153,7 @@ export async function listPropertiesPaginated(
     };
   } catch (error) {
     logError("properties:paginated", error);
-    const items = filterMockProperties(query);
+    const items = getMockProperties(query);
     const start = (params.page - 1) * params.limit;
     const paginatedItems = items.slice(start, start + params.limit);
 
@@ -163,7 +168,9 @@ export async function getPropertyById(id: string): Promise<Property | null> {
   try {
     const connected = await checkDatabaseConnection();
     if (!connected) {
-      return mockProperties.find((property) => property.id === id) ?? null;
+      return shouldUseMockDataFallback()
+        ? (mockProperties.find((property) => property.id === id) ?? null)
+        : null;
     }
 
     const record = await prisma.property.findUnique({
@@ -174,7 +181,9 @@ export async function getPropertyById(id: string): Promise<Property | null> {
     return record ? mapProperty(record) : null;
   } catch (error) {
     logError("properties:getById", error);
-    return mockProperties.find((property) => property.id === id) ?? null;
+    return shouldUseMockDataFallback()
+      ? (mockProperties.find((property) => property.id === id) ?? null)
+      : null;
   }
 }
 
@@ -300,7 +309,7 @@ export async function getFeaturedProperties(limit = 3): Promise<Property[]> {
   try {
     const connected = await checkDatabaseConnection();
     if (!connected) {
-      return filterMockProperties({ status: "active" }).slice(0, limit);
+      return getMockProperties({ status: "active" }).slice(0, limit);
     }
 
     const featuredRecords = await prisma.property.findMany({
@@ -324,7 +333,7 @@ export async function getFeaturedProperties(limit = 3): Promise<Property[]> {
     return records.map(mapProperty);
   } catch (error) {
     logError("properties:featured", error);
-    return filterMockProperties({ status: "active" }).slice(0, limit);
+    return getMockProperties({ status: "active" }).slice(0, limit);
   }
 }
 
@@ -395,7 +404,9 @@ export async function getPublicPropertyIds(): Promise<string[]> {
   try {
     const connected = await checkDatabaseConnection();
     if (!connected) {
-      return mockProperties.filter((property) => property.status !== "draft").map((property) => property.id);
+      return shouldUseMockDataFallback()
+        ? mockProperties.filter((property) => property.status !== "draft").map((property) => property.id)
+        : [];
     }
 
     const records = await prisma.property.findMany({
@@ -407,7 +418,9 @@ export async function getPublicPropertyIds(): Promise<string[]> {
     return records.map((record) => record.id);
   } catch (error) {
     logError("properties:publicIds", error);
-    return mockProperties.filter((property) => property.status !== "draft").map((property) => property.id);
+    return shouldUseMockDataFallback()
+      ? mockProperties.filter((property) => property.status !== "draft").map((property) => property.id)
+      : [];
   }
 }
 

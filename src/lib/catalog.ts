@@ -49,6 +49,12 @@ export const CATEGORY_LINKS: { slug: CatalogCategorySlug; label: string; href: s
   { slug: "rent", label: "Аренда", href: "/catalog/rent" },
 ];
 
+const KNOWN_CATEGORY_SLUGS = new Set<string>(CATEGORY_LINKS.map((link) => link.slug));
+
+export function isKnownCatalogCategorySlug(slug: string): slug is CatalogCategorySlug {
+  return KNOWN_CATEGORY_SLUGS.has(slug);
+}
+
 const CATEGORY_TYPE_MAP: Record<CatalogCategorySlug, PropertyType | ""> = {
   all: "",
   apartments: "apartment",
@@ -58,11 +64,12 @@ const CATEGORY_TYPE_MAP: Record<CatalogCategorySlug, PropertyType | ""> = {
   rent: "rent",
 };
 
-export function getDefaultFilters(categorySlug: CatalogCategorySlug): CatalogFiltersState {
-  const categoryType = CATEGORY_TYPE_MAP[categorySlug];
+export function getDefaultFilters(categorySlug: string): CatalogFiltersState {
+  const knownSlug = isKnownCatalogCategorySlug(categorySlug) ? categorySlug : "all";
+  const categoryType = CATEGORY_TYPE_MAP[knownSlug];
   return {
     type: categoryType === "rent" || categoryType === "" ? "" : categoryType,
-    deal: categorySlug === "rent" ? "rent" : "",
+    deal: knownSlug === "rent" ? "rent" : "",
     district: "",
     rooms: "",
     minPrice: "",
@@ -75,7 +82,7 @@ export function getDefaultFilters(categorySlug: CatalogCategorySlug): CatalogFil
 
 export function parseSearchParams(
   params: URLSearchParams,
-  categorySlug: CatalogCategorySlug
+  categorySlug: string,
 ): CatalogFiltersState {
   const defaults = getDefaultFilters(categorySlug);
   const type = params.get("type") as CatalogPropertyType | null;
@@ -101,7 +108,7 @@ function isValidSort(value: string): value is CatalogSortOption {
 
 export function buildSearchParams(
   filters: CatalogFiltersState,
-  categorySlug: CatalogCategorySlug
+  categorySlug: string,
 ): URLSearchParams {
   const params = new URLSearchParams();
   const defaults = getDefaultFilters(categorySlug);
@@ -122,9 +129,35 @@ export function buildSearchParams(
 export function filterProperties(
   properties: Property[],
   filters: CatalogFiltersState,
-  categorySlug: CatalogCategorySlug
+  categorySlug: string,
 ): Property[] {
-  const categoryType = CATEGORY_TYPE_MAP[categorySlug];
+  if (categorySlug !== "all" && !isKnownCatalogCategorySlug(categorySlug)) {
+    return properties.filter((property) => {
+      if (property.status === "draft") return false;
+      if (property.category !== categorySlug) return false;
+
+      if (filters.district && property.district !== filters.district) return false;
+
+      if (filters.rooms) {
+        if (property.rooms === null) return false;
+        if (filters.rooms === "4+") {
+          if (property.rooms < 4) return false;
+        } else if (property.rooms !== Number(filters.rooms)) {
+          return false;
+        }
+      }
+
+      if (filters.minPrice && property.price < Number(filters.minPrice)) return false;
+      if (filters.maxPrice && property.price > Number(filters.maxPrice)) return false;
+      if (filters.minArea && property.area < Number(filters.minArea)) return false;
+      if (filters.maxArea && property.area > Number(filters.maxArea)) return false;
+
+      return true;
+    });
+  }
+
+  const knownCategorySlug = isKnownCatalogCategorySlug(categorySlug) ? categorySlug : "all";
+  const categoryType = CATEGORY_TYPE_MAP[knownCategorySlug];
 
   return properties.filter((property) => {
     if (property.status === "draft") return false;
@@ -195,7 +228,7 @@ export function formatPropertyCount(count: number): string {
 
 export function countActiveFilters(
   filters: CatalogFiltersState,
-  categorySlug: CatalogCategorySlug
+  categorySlug: string,
 ): number {
   const defaults = getDefaultFilters(categorySlug);
   let count = 0;

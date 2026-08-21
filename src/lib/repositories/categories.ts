@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { checkDatabaseConnection } from "@/lib/db";
+import { shouldUseMockDataFallback } from "@/lib/data-source";
 import { mockCategories } from "@/lib/mock-data/categories";
 import { logError } from "@/lib/logger";
 import { deleteStoredFile } from "@/lib/media-storage";
@@ -16,14 +17,18 @@ const MOCK_ADMIN_CATEGORIES: Category[] = mockCategories.map((category, index) =
   sortOrder: index + 1,
 }));
 
-async function withCategoryFallback<T>(operation: () => Promise<T>, fallback: T): Promise<T> {
+async function withCategoryFallback<T>(
+  operation: () => Promise<T>,
+  fallback: T,
+  empty: T,
+): Promise<T> {
   try {
     const connected = await checkDatabaseConnection();
-    if (!connected) return fallback;
+    if (!connected) return shouldUseMockDataFallback() ? fallback : empty;
     return await operation();
   } catch (error) {
     logError("categories", error);
-    return fallback;
+    return shouldUseMockDataFallback() ? fallback : empty;
   }
 }
 
@@ -34,7 +39,7 @@ export async function listCategories(): Promise<Category[]> {
     });
 
     return records.map(mapCategory);
-  }, MOCK_ADMIN_CATEGORIES);
+  }, MOCK_ADMIN_CATEGORIES, []);
 }
 
 export async function listActiveCategories(): Promise<Category[]> {
@@ -45,21 +50,21 @@ export async function listActiveCategories(): Promise<Category[]> {
     });
 
     return records.map(mapCategory);
-  }, MOCK_ADMIN_CATEGORIES.filter((category) => category.isActive));
+  }, MOCK_ADMIN_CATEGORIES.filter((category) => category.isActive), []);
 }
 
 export async function getCategoryById(id: string): Promise<Category | null> {
   return withCategoryFallback(async () => {
     const record = await prisma.category.findUnique({ where: { id } });
     return record ? mapCategory(record) : null;
-  }, MOCK_ADMIN_CATEGORIES.find((category) => category.id === id) ?? null);
+  }, MOCK_ADMIN_CATEGORIES.find((category) => category.id === id) ?? null, null);
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   return withCategoryFallback(async () => {
     const record = await prisma.category.findUnique({ where: { slug } });
     return record ? mapCategory(record) : null;
-  }, MOCK_ADMIN_CATEGORIES.find((category) => category.slug === slug) ?? null);
+  }, MOCK_ADMIN_CATEGORIES.find((category) => category.slug === slug) ?? null, null);
 }
 
 export async function resolveCategoryForProperty(slug: string) {

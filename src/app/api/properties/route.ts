@@ -11,6 +11,7 @@ import {
   listPropertiesPaginated,
 } from "@/lib/properties";
 import { formValuesToPropertyInput } from "@/lib/property-form";
+import { revalidatePropertyPages } from "@/lib/revalidate-content";
 import { parseJsonRequest } from "@/lib/validation/parse";
 import { propertyFormSchema } from "@/lib/validation/property";
 
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
     }
 
     const property = await createProperty(input);
+    revalidatePropertyPages(property.id);
     return apiSuccess(property, 201);
   } catch (error) {
     if (error instanceof Error && error.message.startsWith("Category not found")) {

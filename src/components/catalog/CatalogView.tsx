@@ -10,7 +10,6 @@ import {
   filterProperties,
   parseSearchParams,
   sortProperties,
-  type CatalogCategorySlug,
   type CatalogFiltersState,
   type CatalogSortOption,
 } from "@/lib/catalog";
@@ -21,7 +20,7 @@ import { CatalogToolbar, CatalogToolbarSort } from "./CatalogToolbar";
 import { CatalogEmptyState } from "./CatalogEmptyState";
 
 interface CatalogViewProps {
-  categorySlug?: CatalogCategorySlug;
+  categorySlug?: string;
   properties: Property[];
   heroTitle?: string;
   heroDescription?: string;

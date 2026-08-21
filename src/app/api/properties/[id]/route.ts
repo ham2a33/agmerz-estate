@@ -9,6 +9,7 @@ import {
   updateProperty,
 } from "@/lib/properties";
 import { formValuesToPropertyInput } from "@/lib/property-form";
+import { revalidatePropertyPages } from "@/lib/revalidate-content";
 import { parseJsonRequest } from "@/lib/validation/parse";
 import { propertyFormSchema } from "@/lib/validation/property";
 
@@ -47,6 +48,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     const updated = await updateProperty(id, input);
+    revalidatePropertyPages(id);
     return apiSuccess(updated);
   } catch (error) {
     return handleApiError("properties:PUT", error);
@@ -63,6 +65,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     if (!deleted) return apiNotFound("Property");
 
+    revalidatePropertyPages(id);
     return apiSuccess({ id });
   } catch (error) {
     return handleApiError("properties:DELETE", error);

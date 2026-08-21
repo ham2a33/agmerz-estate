@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/Button";
 import {
   CATALOG_DISTRICTS,
   countActiveFilters,
-  type CatalogCategorySlug,
   type CatalogFiltersState,
   type CatalogPropertyType,
   type CatalogDealType,
@@ -13,7 +12,7 @@ import {
 
 interface CatalogFiltersProps {
   filters: CatalogFiltersState;
-  categorySlug: CatalogCategorySlug;
+  categorySlug: string;
   onApply: (filters: CatalogFiltersState) => void;
   onReset: () => void;
   mobileSort?: React.ReactNode;
