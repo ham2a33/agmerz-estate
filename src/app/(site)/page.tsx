@@ -15,6 +15,8 @@ import { getStoreConfig } from "@/lib/store-config.server";
 import { getHomepageConfig } from "@/lib/homepage";
 import { getCategoryCardsData } from "@/lib/category-images.server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "AGMERZ ESTATE — Недвижимость",
   description:
